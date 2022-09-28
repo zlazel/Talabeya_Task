@@ -32,7 +32,7 @@ export class TicketsComponent implements AfterViewInit, OnInit {
   constructor(private ticketService: TicketService) {
     this.pageEvent = {
       length: 0,
-      pageIndex: 1,
+      pageIndex: 0,
       pageSize: 5,
     };
   }
@@ -54,7 +54,8 @@ export class TicketsComponent implements AfterViewInit, OnInit {
   }
   setPaginatorData(data: PaginatedListOfTicketBriefDto) {
     if (data && this.pageEvent) {
-      this.pageEvent.pageIndex = data.pageNumber;
+      debugger;
+      this.pageEvent.pageIndex = data.pageNumber - 1;
       this.pageEvent.length = data.totalCount;
     } else {
       this.pageEvent = undefined;
@@ -62,16 +63,19 @@ export class TicketsComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    //this.dataSource.paginator = this.paginator;
+    console.log('this.paginator', this.paginator);
+
     setInterval(() => {
       this.dataSource.data = this.tickets;
     }, 3000);
   }
 
   changePage(pageEvent: PageEvent | undefined) {
+    debugger;
     this.pageEvent = pageEvent;
     if (pageEvent) {
-      this.getTickets(this.pageEvent.pageIndex, this.pageEvent.pageSize);
+      this.getTickets(this.pageEvent.pageIndex + 1, this.pageEvent.pageSize);
     }
   }
   getDateFromNow(ticket: TicketBriefDto): string {
