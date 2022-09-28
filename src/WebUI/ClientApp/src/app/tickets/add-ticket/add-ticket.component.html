@@ -1,0 +1,61 @@
+<div class="ticket-form">
+  <form class="form-group" [formGroup]="ticketForm" (ngSubmit)="addTicket()">
+    <p>
+      <label for="phone">Phone </label>
+      <input
+        class="form-control"
+        type="text"
+        id="firstname"
+        name="phone"
+        formControlName="phone"
+      />
+    </p>
+    <p>
+      <label for="district">district </label>
+      <select
+        class="form-control"
+        id="district"
+        name="district"
+        formControlName="district"
+      >
+        <option *ngFor="let item of districts; let i = index" [value]="i+1">
+          {{ item }}
+        </option>
+      </select>
+    </p>
+    <p>
+      <label for="city">city </label>
+      <select
+        class="form-control"
+        id="city"
+        name="city"
+        formControlName="city"
+      >
+        <option *ngFor="let item of cities; let i = index" [value]="i+1">
+          {{ item }}
+        </option>
+      </select>
+    </p>
+    <p>
+      <label for="goverenorate">goverenorate </label>
+      <select
+        class="form-control"
+        id="goverenorate"
+        name="goverenorate"
+        formControlName="goverenorate"
+      >
+        <option *ngFor="let item of goverenorates; let i = index" [value]="i+1">
+          {{ item }}
+        </option>
+      </select>
+    </p>
+
+    <p>
+      <button class="btn btn-primary" type="submit"
+      (ngSubmit)="addTicket()">
+      <!-- [disabled]="ticketForm.invalid" -->
+        AddTicket
+      </button>
+    </p>
+  </form>
+</div>

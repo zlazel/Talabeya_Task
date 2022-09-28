@@ -1,0 +1,87 @@
+<button class="btn btn-success" routerLink="/add-ticket"> Add New Ticket</button>
+
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource">
+    <!-- id Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>id</th>
+      <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+    </ng-container>
+
+    <!-- phone Column -->
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef>phone</th>
+      <td mat-cell *matCellDef="let element">{{ element.phone }}</td>
+    </ng-container>
+
+    <!-- district Column -->
+    <ng-container matColumnDef="district">
+      <th mat-header-cell *matHeaderCellDef>district</th>
+      <td mat-cell *matCellDef="let element">{{ element.district }}</td>
+    </ng-container>
+
+    <!-- city Column -->
+    <ng-container matColumnDef="city">
+      <th mat-header-cell *matHeaderCellDef>city</th>
+      <td mat-cell *matCellDef="let element">{{ element.city }}</td>
+    </ng-container>
+
+    <!-- goverenorate Column -->
+    <ng-container matColumnDef="goverenorate">
+      <th mat-header-cell *matHeaderCellDef>governorate</th>
+      <td mat-cell *matCellDef="let element">{{ element.goverenorate }}</td>
+    </ng-container>
+
+    <!-- created Column -->
+    <ng-container matColumnDef="created">
+      <th mat-header-cell *matHeaderCellDef>created</th>
+      <td mat-cell *matCellDef="let element">{{ getDateFromNow(element) }}</td>
+    </ng-container>
+
+    <!-- isHandeled Column -->
+    <ng-container matColumnDef="isHandeled">
+      <th mat-header-cell *matHeaderCellDef>isHandled</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          *ngIf="!element.isHandeled"
+          class="btn"
+          [ngClass]="{
+            'btn-success': element.isHandeled,
+            'btn-danger': !element.isHandeled
+          }"
+          (click)="handleTicket(element.id)"
+        >
+          handle now
+        </button>
+        <span *ngIf="element.isHandeled">handled before</span>
+      </td>
+    </ng-container>
+
+    <!-- statusColor Column -->
+    <ng-container matColumnDef="statusColor">
+      <th mat-header-cell *matHeaderCellDef>color</th>
+      <td mat-cell *matCellDef="let element">
+        <span
+          class="status-color"
+          [ngStyle]="{ 'background-color': element.color }"
+          >{{ element.color }}</span
+        >
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons="false"
+    aria-label="Select page of periodic elements"
+    [style.width]="'80%'"
+    [length]="pageEvent?.length"
+    [pageIndex]="pageEvent?.pageIndex"
+    [pageSize]="pageEvent?.pageSize"
+    (page)="changePage($event)"
+  >
+  </mat-paginator>
+</div>
