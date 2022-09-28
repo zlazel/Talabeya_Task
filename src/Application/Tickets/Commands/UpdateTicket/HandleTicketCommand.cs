@@ -3,33 +3,24 @@ using Talabeya_Task.Application.Common.Interfaces;
 using Talabeya_Task.Domain.Entities;
 using MediatR;
 using Talabeya_Task.Domain.Enums;
+using Talabeya_Task.Infrastructure.Persistence.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Talabeya_Task.Application.Tickets.Commands.UpdateTicket;
 
 public record HandleTicketCommand(int Id) : IRequest;
 public class UpdateTicketCommandHandler : IRequestHandler<HandleTicketCommand>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly ITicketRepository _ticketRepository;
 
-    public UpdateTicketCommandHandler(IApplicationDbContext context)
+    public UpdateTicketCommandHandler(ITicketRepository ticketRepository)
     {
-        _context = context;
+        _ticketRepository = ticketRepository;
     }
 
     public async Task<Unit> Handle(HandleTicketCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Tickets
-            .FindAsync(new object[] { request.Id }, cancellationToken);
-
-        if (entity == null)
-        {
-            throw new NotFoundException(nameof(Ticket), request.Id);
-        }
-
-        entity.IsHandeled = true;
-
-        await _context.SaveChangesAsync(cancellationToken);
-
+        await _ticketRepository.HandleTicketAsync(request.Id, cancellationToken);
         return Unit.Value;
     }
 }

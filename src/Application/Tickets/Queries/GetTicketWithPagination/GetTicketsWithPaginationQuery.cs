@@ -6,6 +6,7 @@ using Talabeya_Task.Application.Common.Models;
 using MediatR;
 using Talabeya_Task.Domain.Events;
 using Talabeya_Task.Application.Tickets.Commands.UpdateTicket;
+using Talabeya_Task.Infrastructure.Persistence.Data;
 
 namespace Talabeya_Task.Application.Tickets.Queries.GetTicketsWithPagination;
 
@@ -17,24 +18,19 @@ public record GetTicketsWithPaginationQuery : IRequest<PaginatedList<TicketBrief
 
 public class GetTicketsWithPaginationQueryHandler : IRequestHandler<GetTicketsWithPaginationQuery, PaginatedList<TicketBriefDto>>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
     private readonly IMediator _mediator;
+    private readonly ITicketRepository _ticketRepository;
 
-    public GetTicketsWithPaginationQueryHandler(IApplicationDbContext context, IMapper mapper, IMediator mediator)
+    public GetTicketsWithPaginationQueryHandler(IMediator mediator, ITicketRepository ticketRepository)
     {
-        _context = context;
-        _mapper = mapper;
         _mediator = mediator;
+        _ticketRepository = ticketRepository;
     }
 
     public async Task<PaginatedList<TicketBriefDto>> Handle(GetTicketsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         await _mediator.Publish(new TicketHandleNeededEvent(), cancellationToken);
-        var list = await _context.Tickets
-        .OrderByDescending(x => x.Created)
-        .ProjectTo<TicketBriefDto>(_mapper.ConfigurationProvider)
-        .PaginatedListAsync(request.PageNumber, request.PageSize);
-        return list;
+
+        return await _ticketRepository.GetPaginatedListAsync(request.PageNumber, request.PageSize, cancellationToken);
     }
 }

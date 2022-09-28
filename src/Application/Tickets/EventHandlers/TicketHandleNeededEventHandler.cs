@@ -30,7 +30,6 @@ public class TicketHandleNeededEventHandler : INotificationHandler<TicketHandleN
         {
             foreach (var item in tickes.Where(HandleLastHourData))
             {
-
                 item.IsHandeled = true;
                 _context.Tickets.Update(item);
             }

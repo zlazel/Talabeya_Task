@@ -3,6 +3,7 @@ using Talabeya_Task.Domain.Entities;
 using Talabeya_Task.Domain.Events;
 using MediatR;
 using Talabeya_Task.Domain.Enums;
+using Talabeya_Task.Infrastructure.Persistence.Data;
 
 namespace Talabeya_Task.Application.Tickets.Commands.CreateTicket;
 
@@ -16,11 +17,11 @@ public record CreateTicketCommand : IRequest<int>
 
 public class CreateTicketCommandHandler : IRequestHandler<CreateTicketCommand, int>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly ITicketRepository _ticketRepository;
 
-    public CreateTicketCommandHandler(IApplicationDbContext context)
+    public CreateTicketCommandHandler(ITicketRepository ticketRepository)
     {
-        _context = context;
+        _ticketRepository = ticketRepository;
     }
 
     public async Task<int> Handle(CreateTicketCommand request, CancellationToken cancellationToken)
@@ -32,13 +33,6 @@ public class CreateTicketCommandHandler : IRequestHandler<CreateTicketCommand, i
             City = (City)request.City,
             District = (District)request.District,
         };
-
-        entity.AddDomainEvent(new TicketCreatedEvent(entity));
-
-        _context.Tickets.Add(entity);
-
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return entity.Id;
+        return await _ticketRepository.AddAsync(entity, cancellationToken);
     }
 }
